@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentine?</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #fff;
+      padding-top: 40px;
+      overflow: hidden;
+    }
+
+    img {
+      width: 220px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 14px 28px;
+      margin: 10px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: transform 0.25s ease;
+      white-space: nowrap;
+    }
+
+    #yesBtn {
+      background-color: #ff4d6d;
+      color: white;
+    }
+
+    #noBtn {
+      background-color: #ddd;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" alt="Minion Love" />
+
+  <h2>Will you be my Valentine, babe? 💘</h2>
+
+  <button id="yesBtn">Yes 💖</button>
+  <button id="noBtn">No 😐</button>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    let noScale = 1;
+    let yesScale = 1;
+    let clickCount = 0;
+
+    const noTexts = [
+      "No 😐",
+      "Wrong answer",
+      "Are you sure?",
+      "Think again",
+      "C’mon 😭",
+      "You better say yes",
+      "Babeee pleaseeee 🥺",
+      "Why are you like this",
+      "Okay last chance",
+      "…yes?"
+    ];
+
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+
+    noBtn.addEventListener("click", () => {
+      clickCount++;
+      noScale -= 0.15;
+      yesScale += 0.15;
+
+      noBtn.textContent = noTexts[Math.min(clickCount, noTexts.length - 1)];
+
+      if (noScale <= 0.25) {
+        noBtn.style.display = "none";
+      } else {
+        noBtn.style.transform = `scale(${noScale})`;
+      }
+
+      yesBtn.style.transform = `scale(${yesScale})`;
+    });
+
+    yesBtn.addEventListener("click", () => {
+      document.body.innerHTML = `
+        <canvas id="confetti"></canvas>
+        <h1>YAYYYYY 💕🥰</h1>
+        <p>I can’t wait to marry you, babe 💍❤️</p>
+        <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" style="width:260px;margin-top:20px;" />
+      `;
+      launchConfetti();
+    });
+
+    function launchConfetti() {
+      const canvas = document.getElementById("confetti");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      for (let i = 0; i < 180; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 40,
+          color: `hsl(${Math.random() * 360},100%,70%)`
+        });
+      }
+
+      let angle = 0;
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        update();
+      }
+
+      function update() {
+        angle += 0.01;
+        pieces.forEach(p => {
+          p.y += Math.cos(angle + p.d) + 1 + p.r / 2;
+          p.x += Math.sin(angle);
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+        });
+      }
+
+      setInterval(draw, 20);
+    }
+  </script>
+
+</body>
+</html>
